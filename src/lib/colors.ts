@@ -1,0 +1,6 @@
+export const colors = {
+  primary: "#232321",
+  secondary: "#4A69E2",
+  tertiary: "#FFA52F",
+  background: "#E7E7E3",
+};
