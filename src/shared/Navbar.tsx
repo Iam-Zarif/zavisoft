@@ -1,11 +1,15 @@
+"use client"
 import Image from "next/image";
 import { FaSortDown, FaUser } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { colors } from "@/src/lib/colors";
 import Logo from "../hooks/Logo";
 import { LuMenu } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+    const router = useRouter();
+
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 w-full z-50 px-4">
       <div className="max-w-332 mx-auto w-full p-4 md:p-6 bg-white rounded-3xl relative flex items-center">
@@ -45,7 +49,10 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2 cursor-pointer">
+        <div
+          onClick={() => router.push("/")}
+          className="absolute left-1/2 -translate-x-1/2 cursor-pointer"
+        >
           <div className="scale-75 md:scale-100">
             <Logo
               k_fill={colors.primary}

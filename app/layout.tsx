@@ -5,6 +5,7 @@ import Navbar from "@/src/shared/Navbar";
 import { colors } from "@/src/lib/colors";
 import Footer from "@/src/shared/Footer";
 import Cta from "@/src/components/home/Cta";
+import ProductWrapper from "@/src/providers/ProductWrapper";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -27,10 +28,12 @@ export default function RootLayout({
         className={`${rubik.className}  antialiased`}
         style={{ backgroundColor: colors.background }}
       >
-        <Navbar />
-        {children}
-        <Cta />
-        <Footer />
+        <ProductWrapper>
+          <Navbar />
+          {children}
+          <Cta />
+          <Footer />
+        </ProductWrapper>
       </body>
     </html>
   );

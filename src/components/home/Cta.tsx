@@ -15,7 +15,7 @@ const Cta = () => {
         } as React.CSSProperties
       }
     >
-      <div className="mx-auto w-full max-w-332 rounded-t-[3rem] bg-(--secondary) px-6 py-12 md:px-10 md:py-16 lg:px-18 lg:pt-0 lg:py-20">
+      <div className="mx-auto w-full max-w-332 rounded-t-[3rem] bg-(--secondary) px-6 py-12 md:px-10  lg:px-18  lg:py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <h2 className="font-[Rubik] text-3xl md:text-4xl lg:text-5xl font-semibold uppercase leading-tight text-(--background)">

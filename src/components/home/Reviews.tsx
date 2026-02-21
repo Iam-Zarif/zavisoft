@@ -76,7 +76,7 @@ const Reviews = () => {
               key={item.id}
               className="overflow-hidden rounded-[1.25rem] bg-[#f3f4f6]"
             >
-              <div className="flex items-start justify-between p-8">
+              <div className="flex items-start justify-between p-5 lg:p-8">
                 <div>
                   <h3 className="font-[Rubik] text-2xl font-semibold text-(--primary)">
                     {item.title}
