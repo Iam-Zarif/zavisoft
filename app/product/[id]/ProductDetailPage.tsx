@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FiHeart } from "react-icons/fi";
-import { useEffect, useMemo, useState } from "react";
+import {  useMemo, useState } from "react";
 import { colors } from "@/src/lib/colors";
 import Suggestion from "@/src/components/product/Suggestion";
 import { Product } from "@/src/types/products";
@@ -11,18 +11,10 @@ const sizes = ["38", "39", "40", "41", "42", "43", "44", "45", "46", "47"];
 const productColors = ["#2F3A4D", "#7E8E7E"];
 
 const ProductDetailPage = ({ product }: { product: Product }) => {
-  const [activeImage, setActiveImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(0);
-console.log("product details" , product)
+  const [activeImage, setActiveImage] = useState<number>(() => 0);
+  const [selectedColor, setSelectedColor] = useState<number>(() => 0);
+
   const images = product.images?.length ? product.images : ["/fallback.png"];
-
- useEffect(() => {
-   setActiveImage(0);
- }, [product?.id]);
-
- useEffect(() => {
-   setSelectedColor(0);
- }, [product?.id]);
 
   const parsedDescription = useMemo(() => {
     const desc = (product.description || "").trim();

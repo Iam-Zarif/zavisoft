@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { colors } from "@/src/lib/colors";
+import { Product } from "@/src/types/products";
 
 interface Props {
-  item: any;
+  item: Product;
 }
 
 const ProductCard = ({ item }: Props) => {

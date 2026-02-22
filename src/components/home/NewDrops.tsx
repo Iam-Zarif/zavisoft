@@ -5,10 +5,10 @@ import { useProducts } from "@/src/context/productContext";
 import ProductCard from "../reUsable/product/ProductCard";
 import SectionTitle from "@/src/hooks/SectionTitle";
 import { PrimaryButton } from "@/src/hooks/PrimaryButton";
-import ProductCardSkeleton from "../reUsable/product/ProductCardSkeleton.tsx";
+import ProductCardSkeleton from "../reUsable/product/ProductCardSkeleton";
 
 const NewDrops = () => {
-  const { products, loading, error, emptyMessage } = useProducts();
+  const { products, loading, error, empty } = useProducts();
   const visibleProducts = products?.slice(0, 4) || [];
   const isEmpty = !loading && !error && visibleProducts.length === 0;
 
@@ -56,7 +56,7 @@ const NewDrops = () => {
               className="text-lg font-medium"
               style={{ color: colors.primary }}
             >
-              {emptyMessage || "No new drops available."}
+              {empty || "No new drops available."}
             </p>
             <p className="mt-2 text-sm text-gray-500">
               Please check back later.

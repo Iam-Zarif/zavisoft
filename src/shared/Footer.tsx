@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { colors } from "@/src/lib/colors";
 import Logo from "../hooks/Logo";
@@ -10,27 +10,37 @@ import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from "react-icons/fa";
 gsap.registerPlugin(ScrollTrigger);
 
 const Footer = () => {
-  const logoRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!logoRef.current) return;
-    gsap.fromTo(
-      logoRef.current,
-      { scaleY: 0.5, opacity: 0.5 },
-      {
-        scaleY: 1,
-        opacity: 1,
-        transformOrigin: "top center",
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: logoRef.current,
-          start: "top 95%",
-          end: "top 60%",
-          scrub: true,
-        },
-      },
-    );
-  }, []);
+  
+    const logoRef = useRef<HTMLDivElement>(null);
+
+    useLayoutEffect(() => {
+      if (!logoRef.current) return;
+
+      const el = logoRef.current;
+
+      const ctx = gsap.context(() => {
+        gsap.set(el, {
+          clipPath: "inset(0% 0% 100% 0%)",
+          WebkitClipPath: "inset(0% 0% 100% 0%)",
+        });
+
+        gsap.to(el, {
+          clipPath: "inset(0% 0% 0% 0%)",
+          WebkitClipPath: "inset(0% 0% 0% 0%)",
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom", 
+            toggleActions: "play none none reverse",
+            markers: false,
+          },
+        });
+      }, logoRef);
+
+      return () => ctx.revert();
+    }, []);
 
   return (
     <footer
@@ -110,13 +120,14 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="pt-14 md:pt-20 overflow-hidden" ref={logoRef}>
+          <div className="pt-14 md:pt-20  overflow-hidden" ref={logoRef}>
             <Logo
               k_fill={colors.background}
               i_fill={colors.background}
               c_fill={colors.background}
               s_fill={colors.background}
               width="100%"
+            
             />
           </div>
         </div>

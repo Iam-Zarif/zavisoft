@@ -4,13 +4,14 @@ type LogoProps = {
   c_fill: string;
   s_fill: string;
   width?: number | string;
+  height?: number | string;
 };
 
-const Logo: React.FC<LogoProps> = ({ k_fill, i_fill, c_fill, s_fill, width }) => {
+const Logo: React.FC<LogoProps> = ({ k_fill, i_fill, c_fill, s_fill, width, height }) => {
   return (
     <svg
       width={width || "128"}
-      height="auto"
+      height={height || "auto"}
       viewBox="0 0 128 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

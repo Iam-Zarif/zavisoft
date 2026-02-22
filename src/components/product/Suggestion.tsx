@@ -2,14 +2,16 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {  useEffect, useMemo, useState } from "react";
 import { colors } from "@/src/lib/colors";
 import ProductCard from "../reUsable/product/ProductCard";
 import { useProducts } from "@/src/context/productContext";
 
 const Suggestion = () => {
   const { products, loading } = useProducts();
-  const visibleProducts = loading ? [] : products.slice(0, 8);
+const visibleProducts = useMemo(() => {
+  return loading ? [] : products.slice(0, 8);
+}, [loading, products]);
 
   const groupedProducts = useMemo(() => {
     const groups: (typeof visibleProducts)[] = [];
@@ -45,23 +47,26 @@ const Suggestion = () => {
     return () => media.removeEventListener("change", update);
   }, []);
 
-  const onSelect = useCallback(() => {
-    if (!activeApi) return;
+
+useEffect(() => {
+  if (!activeApi) return;
+
+  const handleSelect = () => {
     setSelectedIndex(activeApi.selectedScrollSnap());
     setCanScrollPrev(activeApi.canScrollPrev());
     setCanScrollNext(activeApi.canScrollNext());
-  }, [activeApi]);
+  };
 
-  useEffect(() => {
-    if (!activeApi) return;
-    onSelect();
-    activeApi.on("select", onSelect);
-    activeApi.on("reInit", onSelect);
-    return () => {
-      activeApi.off("select", onSelect);
-      activeApi.off("reInit", onSelect);
-    };
-  }, [activeApi, onSelect]);
+  handleSelect(); // safe initial run
+
+  activeApi.on("select", handleSelect);
+  activeApi.on("reInit", handleSelect);
+
+  return () => {
+    activeApi.off("select", handleSelect);
+    activeApi.off("reInit", handleSelect);
+  };
+}, [activeApi]);
 
   const dotCount = isMobile
     ? groupedProducts.length

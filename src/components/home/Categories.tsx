@@ -19,7 +19,7 @@ const CategorySkeleton = () => {
 };
 
 const Categories = () => {
-  const { categories, loading, error, emptyMessage } = useProducts();
+  const { categories, loading, error, empty } = useProducts();
   const firstTwo = categories?.slice(0, 2);
 
   return (
@@ -59,10 +59,10 @@ const Categories = () => {
             <div className="flex h-90 items-center justify-center rounded-tl-[2.25rem] bg-gray-200 lg:h-140">
               <p className="text-sm font-medium text-red-600">{error}</p>
             </div>
-          ) : emptyMessage || !firstTwo || firstTwo.length === 0 ? (
+          ) : empty || !firstTwo || firstTwo.length === 0 ? (
             <div className="flex h-90 items-center justify-center rounded-tl-[2.25rem] bg-gray-200 lg:h-140">
               <p className="text-sm font-medium text-gray-600">
-                {emptyMessage || "No categories available."}
+                {empty || "No categories available."}
               </p>
             </div>
           ) : (

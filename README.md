@@ -1,37 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+```md
+# Zavisoft Frontend Task
 
-## Getting Started
+## 🚀 Overview
 
-First, run the development server:
+This project is a frontend implementation of the provided Figma design.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+It includes:
+
+- Product Listing Page
+- Product Detail Page
+- Category Integration
+- Cart Page (Bonus Feature)
+- API integration for dynamic product data
+- Fully responsive UI matching the design
+
+The project focuses on clean architecture, proper data flow, and modular component structure.
+
+---
+
+## 🛠 Tech Stack
+
+- Next.js 16 (App Router)
+- TypeScript
+- Context API (State Management)
+- Axios (Data Fetching)
+- Tailwind CSS (Styling)
+- GSAP / Embla Carousel (Animations & Carousel)
+- React Icons
+
+---
+
+## 📂 Project Structure
+
+The codebase follows a modular and scalable structure:
+
+### App Router
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+📂 app
+ - 📄 page.tsx
+ - 📁 cart
+ - 📁 product
+    - 📁 [id]
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📂 src
+ - 📁 components
+   - 📁 hero
+   -  📁 home
+   - 📁 product
+   - 📁 reUsable
+   -  📁 context
+ - 📁 hooks
+ - 📁 lib
+ - 📁 providers
+ - 📁 shared
+ - 📁 types
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## One Click Run
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+````
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+git clone https://github.com/Iam-Zarif/zavisoft.git
+cd zavisoft
+npm install
+npm run dev
 
-## Deploy on Vercel
+````
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# zavisoft
+## ✅ Code Quality
+
+* Clean and modular folder structure
+* Proper separation of concerns
+* Context-based state management
+* API logic separated from UI components
+* Meaningful commit history
+* Loading and error states handled
+* Checks
+ - npm run lint
+ - npm run type-check
+ - npm run build
+ - npm audit --omit=dev --audit-level=high
+
+---
+
+## 🌐 Live URL
+
+[https://zavisoft-smoky.vercel.app](https://zavisoft-smoky.vercel.app)
+
+---
+
+## ⚡ Notes
+
+* Product images from the API sometimes do not have transparent backgrounds, which may affect visual alignment with certain sections of the design.
+* Layout and spacing are implemented according to the Figma design, but image rendering depends on API-provided assets.
+* The project prioritizes clean structure and maintainable code over pixel-perfect image control due to API image limitations.
+

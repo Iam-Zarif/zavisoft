@@ -5,6 +5,7 @@ export interface Category {
   image: string;
   creationAt: string;
   updatedAt: string;
+  
 }
 
 export interface Product {

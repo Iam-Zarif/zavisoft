@@ -6,11 +6,9 @@ import { CartItem } from "@/src/types/products";
 
 interface Props {
   items: CartItem[];
-  updateQuantity: (id: number, type: "inc" | "dec") => void;
-  removeItem: (id: number) => void;
 }
 
-const CartList = ({ items, updateQuantity, removeItem }: Props) => {
+const CartList = ({ items }: Props) => {
   if (items.length === 0) {
     return <p className="mt-6 text-sm text-(--primary)">Your cart is empty.</p>;
   }
@@ -54,7 +52,6 @@ const CartList = ({ items, updateQuantity, removeItem }: Props) => {
               </button>
 
               <button
-                onClick={() => updateQuantity(item.id, "inc")}
                 className="flex items-center gap-1 cursor-pointer"
               >
                 Quantity {item.quantity}
@@ -67,7 +64,6 @@ const CartList = ({ items, updateQuantity, removeItem }: Props) => {
 
               <FiTrash2
                 className="cursor-pointer text-xl"
-                onClick={() => removeItem(item.id)}
               />
             </div>
           </div>

@@ -5,37 +5,33 @@ import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useState,
   useCallback,
+  useMemo,
 } from "react";
-import { Product, Category } from "@/src/types/products";
+import { Product, Category, CartItem } from "@/src/types/products";
 
-interface CartItem extends Product {
-  quantity: number;
-}
-
-interface ProductContextType {
+interface ContextType {
   products: Product[];
   product: Product | null;
   categories: Category[];
   loading: boolean;
   error: string | null;
-  emptyMessage: string | null;
-
-  fetchProductById: (id: string | number) => Promise<void>;
-  refreshProducts: () => Promise<void>;
-  fetchCategories: () => Promise<void>;
+  empty: boolean;
 
   cart: CartItem[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  clearCart: () => void;
-  subtotal: number;
+  cartLoading: boolean;
+  cartError: string | null;
+
+  subtotal: number; // ✅ ADDED
+
+  fetchProducts: () => Promise<void>;
+  fetchProductById: (id: string | number) => Promise<void>;
+  fetchCategories: () => Promise<void>;
+  fetchCart: () => Promise<void>;
 }
 
-const ProductContext = createContext<ProductContextType | undefined>(undefined);
+const Context = createContext<ContextType | undefined>(undefined);
 
 export const ProductProvider = ({
   children,
@@ -45,96 +41,48 @@ export const ProductProvider = ({
   const [products, setProducts] = useState<Product[]>([]);
   const [product, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [emptyMessage, setEmptyMessage] = useState<string | null>(null);
+  const [empty, setEmpty] = useState(false);
 
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartLoading, setCartLoading] = useState(true);
+  const [cartError, setCartError] = useState<string | null>(null);
 
-  /* ================= CART PERSISTENCE ================= */
-
-  useEffect(() => {
-    const stored = localStorage.getItem("cart");
-    if (stored) {
-      setCart(JSON.parse(stored));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+  // ✅ SUBTOTAL — safe numeric calculation
+  const subtotal = useMemo(() => {
+    return cart.reduce((acc, item) => {
+      const price = Number(item.price) || 0;
+      const qty = Number(item.quantity) || 0;
+      return acc + price * qty;
+    }, 0);
   }, [cart]);
 
-  /* ================= CART LOGIC ================= */
-
-  const addToCart = useCallback((product: Product) => {
-    setCart((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
-
-      if (exists) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
-      }
-
-      return [...prev, { ...product, quantity: 1 }];
-    });
-  }, []);
-
-  const removeFromCart = useCallback((id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-  }, []);
-
-  const updateQuantity = useCallback(
-    (id: number, quantity: number) => {
-      if (quantity <= 0) return removeFromCart(id);
-
-      setCart((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
-      );
-    },
-    [removeFromCart],
-  );
-
-  const clearCart = useCallback(() => {
-    setCart([]);
-  }, []);
-
-  const subtotal = useMemo(
-    () => cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [cart],
-  );
-
-  /* ================= API CALLS ================= */
+  /* ---------------- PRODUCTS ---------------- */
 
   const fetchProducts = useCallback(async () => {
-    if (products.length > 0) return;
-
     try {
       setLoading(true);
       setError(null);
-      setEmptyMessage(null);
 
       const { data } = await axios.get(
         "https://api.escuelajs.co/api/v1/products",
       );
 
-      if (!data || data.length === 0) {
+      if (!data?.length) {
+        setEmpty(true);
         setProducts([]);
-        setEmptyMessage("No products available.");
-        return;
+      } else {
+        setProducts(data);
+        setEmpty(false);
       }
-
-      setProducts(data);
     } catch (err) {
-      console.error(err);
-      setError("Failed to load products.");
-      setProducts([]);
+      setError("Failed to fetch products");
+      console.log(err)
     } finally {
       setLoading(false);
     }
-  }, [products.length]);
+  }, []);
 
   const fetchProductById = useCallback(async (id: string | number) => {
     try {
@@ -147,76 +95,52 @@ export const ProductProvider = ({
 
       setProduct(data);
     } catch (err) {
-      console.error(err);
-      setError("Product not found.");
+      setError("Product not found");
+      console.log(err)
       setProduct(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const refreshProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      setEmptyMessage(null);
-
-      const { data } = await axios.get(
-        "https://api.escuelajs.co/api/v1/products",
-      );
-
-      if (!data || data.length === 0) {
-        setProducts([]);
-        setEmptyMessage("No products available.");
-        return;
-      }
-
-      setProducts(data);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to refresh products.");
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   const fetchCategories = useCallback(async () => {
-    if (categories.length > 0) return;
-
     try {
-      setLoading(true);
-      setError(null);
-      setEmptyMessage(null);
-
       const { data } = await axios.get(
         "https://api.escuelajs.co/api/v1/categories",
       );
-
-      if (!data || data.length === 0) {
-        setCategories([]);
-        setEmptyMessage("No categories available.");
-        return;
-      }
-
-      setCategories(data);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load categories.");
+      setCategories(data || []);
+    } catch {
       setCategories([]);
-    } finally {
-      setLoading(false);
     }
-  }, [categories.length]);
+  }, []);
 
-  /* ================= INITIAL LOAD ================= */
+  /* ---------------- CART ---------------- */
+
+  const fetchCart = useCallback(async () => {
+    try {
+      setCartLoading(true);
+      setCartError(null);
+
+      const { data } = await axios.get("/cart.json");
+
+      setCart(data || []);
+    } catch {
+      setCartError("Failed to load cart");
+      setCart([]);
+    } finally {
+      setCartLoading(false);
+    }
+  }, []);
+
+  /* ---------------- INITIAL LOAD ---------------- */
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, [fetchProducts, fetchCategories]);
+    fetchCart();
+  }, [fetchProducts, fetchCategories, fetchCart]);
 
-  /* ================= CONTEXT VALUE ================= */
+  /* ---------------- PROVIDER VALUE ---------------- */
 
   const value = useMemo(
     () => ({
@@ -225,18 +149,18 @@ export const ProductProvider = ({
       categories,
       loading,
       error,
-      emptyMessage,
-
-      fetchProductById,
-      refreshProducts,
-      fetchCategories,
+      empty,
 
       cart,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      subtotal,
+      cartLoading,
+      cartError,
+
+      subtotal, // ✅ EXPOSED
+
+      fetchProducts,
+      fetchProductById,
+      fetchCategories,
+      fetchCart,
     }),
     [
       products,
@@ -244,28 +168,23 @@ export const ProductProvider = ({
       categories,
       loading,
       error,
-      emptyMessage,
+      empty,
       cart,
+      cartLoading,
+      cartError,
       subtotal,
+      fetchProducts,
       fetchProductById,
-      refreshProducts,
       fetchCategories,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
+      fetchCart,
     ],
   );
 
-  return (
-    <ProductContext.Provider value={value}>{children}</ProductContext.Provider>
-  );
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 };
 
 export const useProducts = () => {
-  const context = useContext(ProductContext);
-  if (!context) {
-    throw new Error("useProducts must be used inside ProductProvider");
-  }
-  return context;
+  const ctx = useContext(Context);
+  if (!ctx) throw new Error("Must use inside Provider");
+  return ctx;
 };
