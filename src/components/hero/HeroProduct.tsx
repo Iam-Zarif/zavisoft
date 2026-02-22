@@ -38,7 +38,7 @@ const HeroProduct = () => {
               className="lg:text-2xl lg:w-full w-60 lg:leading-relaxed"
               style={{ color: colors.background }}
             >
-              Nike introducing the new air max for everyone's comfort
+              Nike introducing the new air max for everyone&apos;s comfort
             </p>
           </div>
 

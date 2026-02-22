@@ -28,6 +28,7 @@ const Suggestion = () => {
     loop: false,
     align: "start",
   });
+
   const [desktopRef, desktopApi] = useEmblaCarousel({
     loop: false,
     align: "start",
@@ -107,44 +108,59 @@ const Suggestion = () => {
           </div>
         </div>
 
-        <div className="lg:hidden overflow-hidden" ref={mobileRef}>
-          <div className="flex">
-            {groupedProducts.map((group, index) => (
-              <div key={index} className="min-w-0 flex-[0_0_100%]">
-                <div className="grid grid-cols-2 gap-2">
-                  {group.map((item) => (
-                    <ProductCard key={item.id} item={item} />
-                  ))}
-                </div>
+        {/* ================= LOADER ================= */}
+        {loading ? (
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 animate-pulse">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex flex-col gap-3">
+                <div className="relative h-45 lg:h-80 w-full rounded-2xl bg-gray-300" />
+                <div className="h-6 w-3/4 rounded bg-gray-300" />
+                <div className="h-10 w-full rounded-lg bg-gray-300" />
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="hidden lg:block overflow-hidden" ref={desktopRef}>
-          <div className="flex -mx-2">
-            {visibleProducts.map((item) => (
-              <div key={item.id} className="min-w-0 flex-[0_0_25%] px-2">
-                <ProductCard item={item} />
+        ) : (
+          <>
+            <div className="lg:hidden overflow-hidden" ref={mobileRef}>
+              <div className="flex">
+                {groupedProducts.map((group, index) => (
+                  <div key={index} className="min-w-0 flex-[0_0_100%]">
+                    <div className="grid grid-cols-2 gap-2">
+                      {group.map((item) => (
+                        <ProductCard key={item.id} item={item} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="mt-8 flex justify-center gap-3">
-          {Array.from({ length: dotCount }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => activeApi?.scrollTo(i)}
-              className="h-2 rounded-full transition-all duration-300"
-              style={{
-                width: selectedIndex === i ? 40 : 24,
-                backgroundColor:
-                  selectedIndex === i ? colors.secondary : "#A9A9A9",
-              }}
-            />
-          ))}
-        </div>
+            <div className="hidden lg:block overflow-hidden" ref={desktopRef}>
+              <div className="flex -mx-2">
+                {visibleProducts.map((item) => (
+                  <div key={item.id} className="min-w-0 flex-[0_0_25%] px-2">
+                    <ProductCard item={item} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-center gap-3">
+              {Array.from({ length: dotCount }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => activeApi?.scrollTo(i)}
+                  className="h-2 rounded-full transition-all duration-300"
+                  style={{
+                    width: selectedIndex === i ? 40 : 24,
+                    backgroundColor:
+                      selectedIndex === i ? colors.secondary : "#A9A9A9",
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

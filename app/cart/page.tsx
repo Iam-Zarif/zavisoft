@@ -1,12 +1,65 @@
-import Image from "next/image";
-import { FiChevronDown, FiHeart, FiTrash2 } from "react-icons/fi";
+"use client";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { colors } from "@/src/lib/colors";
 import Suggestion from "@/src/components/product/Suggestion";
+import { CartItem } from "@/src/types/products";
+import CartList from "@/src/components/reUsable/CartList";
+
 
 const Cart = () => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const { data } = await axios.get("/cart.json");
+        await new Promise((res) => setTimeout(res, 500));
+        setCartItems(data);
+      } catch (error) {
+        console.error("Cart fetch failed", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCart();
+  }, []);
+
+  const removeItem = (id: number) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const updateQuantity = (id: number, type: "inc" | "dec") => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity:
+                type === "inc"
+                  ? item.quantity + 1
+                  : Math.max(1, item.quantity - 1),
+            }
+          : item,
+      ),
+    );
+  };
+
+  const delivery = 6.99;
+
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
+
+  const total = subtotal + delivery;
+
   return (
     <section
-      className="px-4 py-8 lg:py-28"
+      className="px-4 flex flex-col gap-10 lg:gap-25 pt-24 lg:pt-28"
       style={
         {
           "--primary": colors.primary,
@@ -17,16 +70,15 @@ const Cart = () => {
     >
       <div className="mx-auto w-full max-w-332">
         <div className="mb-8">
-          <h1 className="font-[Rubik] text-xl font-semibold text-(--primary) lg:text-3xl">
+          <h1 className="text-xl font-semibold text-(--primary) lg:text-3xl">
             Saving to celebrate
           </h1>
 
           <p className="mt-2 text-sm text-(--primary)/75 lg:text-base">
-            Enjoy up to 60% off thousands of styles during the End of Year sale
-            - while supplies last. No code needed.
+            Enjoy up to 60% off thousands of styles — no code needed.
           </p>
 
-          <p className="mt-2 text-sm font-medium text-(--primary) underline lg:text-base">
+          <p className="mt-2 text-sm font-medium underline text-(--primary) lg:text-base">
             Join us <span className="no-underline">or</span> Sign-in
           </p>
         </div>
@@ -38,77 +90,61 @@ const Cart = () => {
             </h2>
 
             <p className="mt-1 text-sm text-(--primary)/70 lg:text-base">
-              Items in your bag not reserved — check out now to make them yours.
+              Items in your bag — not reserved.
             </p>
 
-            <div className="mt-6 grid gap-6 sm:grid-cols-[160px_1fr]">
-              {/* Image */}
-              <div className="relative h-40 w-full overflow-hidden rounded-xl bg-[#d5d7db] sm:h-44">
-                <Image
-                  src="/newDrops/shoe1.png"
-                  alt="Dropset trainer shoes"
-                  fill
-                  className="object-contain p-3"
-                />
-              </div>
+            {loading ? (
+              <div className="mt-8 space-y-6 animate-pulse">
+                {[1].map((item) => (
+                  <div
+                    key={item}
+                    className="grid gap-6 sm:grid-cols-[160px_1fr]"
+                  >
+                    <div className="h-40 w-full rounded-xl bg-gray-300 sm:h-44" />
 
-              {/* Details */}
-              <div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold uppercase text-(--primary) lg:text-2xl">
-                      Dropset Trainer Shoes
-                    </h3>
+                    <div className="space-y-4">
+                      <div className="h-6 w-3/4 rounded bg-gray-300" />
+                      <div className="h-4 w-full rounded bg-gray-300" />
+                      <div className="h-4 w-1/2 rounded bg-gray-300" />
 
-                    <p className="mt-1 text-sm text-(--primary)/85 lg:text-base">
-                      Men&apos;s Road Running Shoes
-                    </p>
-
-                    <p className="text-sm text-(--primary)/85 lg:text-base">
-                      Enamel Blue / University White
-                    </p>
+                      <div className="flex gap-4">
+                        <div className="h-6 w-20 rounded bg-gray-300" />
+                        <div className="h-6 w-20 rounded bg-gray-300" />
+                      </div>
+                    </div>
                   </div>
-
-                  <p className="text-lg font-semibold text-(--secondary) lg:text-2xl">
-                    $130.00
-                  </p>
-                </div>
-
-                {/* Size + Quantity */}
-                <div className="mt-4 flex flex-wrap gap-6 text-sm text-(--primary) lg:text-base">
-                  <button className="flex items-center gap-1">
-                    Size 10 <FiChevronDown className="text-sm" />
-                  </button>
-
-                  <button className="flex items-center gap-1">
-                    Quantity 1 <FiChevronDown className="text-sm" />
-                  </button>
-                </div>
-
-                {/* Icons */}
-                <div className="mt-4 flex items-center gap-4 text-(--primary)">
-                  <FiHeart className="cursor-pointer text-xl" />
-                  <FiTrash2 className="cursor-pointer text-xl" />
-                </div>
+                ))}
               </div>
-            </div>
+            ) : cartItems.length === 0 ? (
+              <p className="mt-6 text-sm text-(--primary)">
+                Your cart is empty.
+              </p>
+            ) : (
+              cartItems.map((item) => (
+                <CartList
+                key={item.id}
+                  items={[item]}
+                  updateQuantity={updateQuantity}
+                  removeItem={removeItem}
+                />
+              ))
+            )}
           </div>
 
-          {/* ================= SUMMARY ================= */}
           <aside>
             <h2 className="text-2xl font-semibold text-(--primary) lg:text-4xl">
               Order Summary
             </h2>
 
-            <div className="mt-6 space-y-3 text-sm text-(--primary) lg:text-base">
+            <div className="mt-6 space-y-3 text-sm text-(--primary)">
               <div className="flex justify-between">
-                <span>1 ITEM</span>
-                <span>$130.00</span>
+                <span>{cartItems.length} ITEM</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Delivery</span>
-                <span>$6.99</span>
+                <span>${delivery.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between">
@@ -117,12 +153,12 @@ const Cart = () => {
               </div>
             </div>
 
-            <div className="mt-4 flex justify-between text-lg font-semibold text-(--primary) lg:text-2xl">
+            <div className="mt-4 flex justify-between text-lg font-semibold text-(--primary)">
               <span>Total</span>
-              <span>$136.99</span>
+              <span>${total.toFixed(2)}</span>
             </div>
 
-            <button className="mt-6 h-12 w-full rounded-lg bg-(--primary) text-sm font-medium uppercase tracking-wide text-white transition hover:opacity-90">
+            <button className="mt-6 h-12 w-full rounded-lg bg-(--primary) text-sm font-medium uppercase tracking-wide text-white hover:opacity-90">
               Checkout
             </button>
 
@@ -132,7 +168,8 @@ const Cart = () => {
           </aside>
         </div>
       </div>
-      <Suggestion/>
+
+      <Suggestion />
     </section>
   );
 };

@@ -5,7 +5,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 const Cta = () => {
   return (
     <section
-      className="px-4 mt-10 lg:mt-25 lg:pt-0 pt-10"
+      className="px-4 lg:mt-25 lg:pt-0 pt-10"
       style={
         {
           "--primary": colors.primary,

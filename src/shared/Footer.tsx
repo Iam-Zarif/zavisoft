@@ -101,10 +101,10 @@ const Footer = () => {
                   Follow us
                 </h4>
                 <div className="mt-4 flex items-center gap-6 text-(--bg)">
-                  <FaFacebook className="text-xl md:text-2xl" />
-                  <FaInstagram className="text-xl md:text-2xl" />
-                  <FaTwitter className="text-xl md:text-2xl" />
-                  <FaTiktok className="text-xl md:text-2xl" />
+                  <FaFacebook className="text-2xl" />
+                  <FaInstagram className="text-2xl" />
+                  <FaTwitter className="text-2xl" />
+                  <FaTiktok className="text-2xl" />
                 </div>
               </div>
             </div>

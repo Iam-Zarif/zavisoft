@@ -13,13 +13,16 @@ const productColors = ["#2F3A4D", "#7E8E7E"];
 const ProductDetailPage = ({ product }: { product: Product }) => {
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
-
+console.log("product details" , product)
   const images = product.images?.length ? product.images : ["/fallback.png"];
 
-  useEffect(() => {
-    setActiveImage(0);
-    setSelectedColor(0);
-  }, [product.id]);
+ useEffect(() => {
+   setActiveImage(0);
+ }, [product?.id]);
+
+ useEffect(() => {
+   setSelectedColor(0);
+ }, [product?.id]);
 
   const parsedDescription = useMemo(() => {
     const desc = (product.description || "").trim();
@@ -153,7 +156,7 @@ const ProductDetailPage = ({ product }: { product: Product }) => {
                     }`}
                   >
                     <span
-                      className="size-5 rounded-full"
+                      className="size-5 cursor-pointer rounded-full"
                       style={{ backgroundColor: color }}
                     />
                   </button>

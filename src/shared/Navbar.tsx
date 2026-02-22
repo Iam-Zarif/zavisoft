@@ -6,6 +6,7 @@ import { colors } from "@/src/lib/colors";
 import Logo from "../hooks/Logo";
 import { LuMenu } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Navbar = () => {
     const router = useRouter();
@@ -68,10 +69,12 @@ const Navbar = () => {
             className="text-2xl hidden md:block cursor-pointer"
             style={{ color: colors.primary }}
           />
-          <FaUser
-            className="text-xl cursor-pointer"
-            style={{ color: colors.primary }}
-          />
+          <Link href="/cart" className="block">
+            <FaUser
+              className="text-xl cursor-pointer"
+              style={{ color: colors.primary }}
+            />
+          </Link>
           <p
             className="h-7 w-7 text-sm flex items-center justify-center rounded-full cursor-pointer"
             style={{ backgroundColor: colors.tertiary }}
