@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { colors } from "@/src/lib/colors";
+import SectionTitle from "@/src/hooks/SectionTitle";
+import { PrimaryButton } from "@/src/hooks/PrimaryButton";
 
 const reviews = [
   {
@@ -49,7 +51,7 @@ const Reviews = () => {
 
   return (
     <section
-      className="px-4 pb-8 lg:pb-20"
+      className="lg:px-0 px-4"
       style={
         {
           "--primary": colors.primary,
@@ -59,15 +61,11 @@ const Reviews = () => {
         } as React.CSSProperties
       }
     >
-      <div className="mx-auto w-full max-w-330 bg-(--bg) lg:py-12">
+      <div className="mx-auto w-full max-w-330 bg-(--bg) ">
         <div className="mb-7 flex items-center justify-between">
-          <h2 className="text-2xl lg:text-6xl font-bold uppercase text-(--primary)">
-            Reviews
-          </h2>
+          <SectionTitle text={`Reviews`} color={colors.primary} />
 
-          <button className="h-8 rounded-lg bg-(--secondary) px-4 font-[Rubik] text-[0.625rem] font-medium uppercase tracking-[0.02em] text-white">
-            See all
-          </button>
+          <PrimaryButton text="See All" />
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">

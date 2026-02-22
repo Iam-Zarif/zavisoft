@@ -5,7 +5,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 const Cta = () => {
   return (
     <section
-      className="px-4 lg:pt-0 pt-10"
+      className="px-4 mt-10 lg:mt-25 lg:pt-0 pt-10"
       style={
         {
           "--primary": colors.primary,
@@ -43,10 +43,10 @@ const Cta = () => {
             </form>
           </div>
 
-          <div className="relative flex justify-center">
-            <FaCirclePlus className="absolute top-6 right-6 md:top-10 md:-right-2 text-(--tertiary) text-2xl md:text-3xl" />
+          <div className="relative w-48 sm:w-64 md:w-80 lg:w-87.5 mx-auto">
+            <FaCirclePlus className="absolute -top-4 -right-4 text-(--tertiary) text-2xl md:text-3xl" />
 
-            <div className="w-48 sm:w-64 md:w-80 lg:w-[350px]">
+            <div className="w-full h-full">
               <Logo
                 k_fill={colors.background}
                 i_fill={colors.background}

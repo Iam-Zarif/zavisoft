@@ -9,13 +9,12 @@ const HomePage = () => {
 
 
   return (
-    <>
+    <div className="flex flex-col gap-10 lg:gap-20">
       <Hero />
       <NewDrops />
       <Categories />
       <Reviews />
-      
-    </>
+    </div>
   );
 };
 

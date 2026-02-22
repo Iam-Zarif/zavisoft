@@ -4,14 +4,15 @@ import Image from "next/image";
 import { FiArrowUpRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { colors } from "@/src/lib/colors";
 import { useProducts } from "@/src/context/productContext";
+import SectionTitle from "@/src/hooks/SectionTitle";
 
 const CategorySkeleton = () => {
   return (
-    <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 animate-pulse md:grid-cols-2">
       {[1, 2].map((i) => (
         <div
           key={i}
-          className="h-90 lg:h-140 rounded-tl-[2.25rem] bg-gray-300"
+          className="h-90 rounded-tl-[2.25rem] bg-gray-300 lg:h-140"
         />
       ))}
     </div>
@@ -20,12 +21,10 @@ const CategorySkeleton = () => {
 
 const Categories = () => {
   const { categories, loading } = useProducts();
-
   const firstTwo = categories?.slice(0, 2);
 
   return (
     <section
-      className="lg:pt-0 pt-10 pb-8 lg:pb-20"
       style={
         {
           "--primary": colors.primary,
@@ -35,12 +34,10 @@ const Categories = () => {
         } as React.CSSProperties
       }
     >
-      <div className="mx-auto w-full lg:px-0 px-4 rounded-none bg-(--primary) pb-0 pt-6 lg:pt-12">
-        <div className="max-w-402 ml-auto w-full">
-          <div className="mb-6 lg:mb-10 max-w-332 mr-auto flex items-center justify-between">
-            <h2 className="text-xl lg:text-[4rem]/[1] font-bold uppercase text-(--bg)">
-              Categories
-            </h2>
+      <div className="mx-auto w-full bg-(--primary) px-4 pb-0 pt-6 lg:px-0 lg:pt-12">
+        <div className="ml-auto w-full max-w-402">
+          <div className="mr-auto mb-6 flex max-w-332 items-center justify-between lg:mb-10">
+            <SectionTitle text="Categories" color={colors.background} />
 
             <div className="flex items-center gap-2">
               <button className="grid size-8 place-items-center rounded-lg bg-white/65 text-(--primary)">
@@ -59,22 +56,21 @@ const Categories = () => {
               {firstTwo?.map((item, index) => (
                 <article
                   key={item.id}
-                  className={`relative ${
-                    index === 0 ? "bg-[#B1AEAC]" : "bg-[#AFAFAF]"
-                  }`}
+                  className="relative flex flex-col justify-between"
+                  style={{
+                    backgroundColor: index === 0 ? "#B1AEAC" : "#AFAFAF",
+                  }}
                 >
-                  <div className="relative mx-auto h-90 lg:h-140 w-full">
+                  <div className="relative h-90 w-full lg:h-140">
                     <Image
                       src={item.image || "/fallback.png"}
                       alt={item.name}
                       fill
-                      className={`object-contain object-top ${
-                        index === 0 ? "-scale-x-100" : ""
-                      }`}
+                      className={`object-contain object-top ${index === 0 ? "-scale-x-100" : ""}`}
                     />
                   </div>
 
-                  <div className="flex items-end justify-between px-9 pb-7">
+                  <div className="relative z-10 flex items-end justify-between px-9 pb-7">
                     <h3 className="font-[Rubik] text-3xl font-bold uppercase text-(--primary)">
                       {item.name.split(" ")[0]}
                       <br />

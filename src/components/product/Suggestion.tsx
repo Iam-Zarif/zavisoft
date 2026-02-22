@@ -2,55 +2,74 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { colors } from "@/src/lib/colors";
 import ProductCard from "../reUsable/product/ProductCard";
 import { useProducts } from "@/src/context/productContext";
 
 const Suggestion = () => {
   const { products, loading } = useProducts();
+  const visibleProducts = loading ? [] : products.slice(0, 8);
 
+  const groupedProducts = useMemo(() => {
+    const groups: (typeof visibleProducts)[] = [];
+    for (let i = 0; i < visibleProducts.length; i += 4) {
+      groups.push(visibleProducts.slice(i, i + 4));
+    }
+    return groups;
+  }, [visibleProducts]);
+
+  const [isMobile, setIsMobile] = useState(false);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [snapCount, setSnapCount] = useState(0);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({
+  const [mobileRef, mobileApi] = useEmblaCarousel({
     loop: false,
     align: "start",
   });
+  const [desktopRef, desktopApi] = useEmblaCarousel({
+    loop: false,
+    align: "start",
+    containScroll: "trimSnaps",
+  });
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
-  }, [emblaApi]);
+  const activeApi = isMobile ? mobileApi : desktopApi;
 
   useEffect(() => {
-    if (!emblaApi) return;
+    const media = window.matchMedia("(max-width: 1023px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
-    setSnapCount(emblaApi.scrollSnapList().length);
+  const onSelect = useCallback(() => {
+    if (!activeApi) return;
+    setSelectedIndex(activeApi.selectedScrollSnap());
+    setCanScrollPrev(activeApi.canScrollPrev());
+    setCanScrollNext(activeApi.canScrollNext());
+  }, [activeApi]);
+
+  useEffect(() => {
+    if (!activeApi) return;
     onSelect();
-
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-
+    activeApi.on("select", onSelect);
+    activeApi.on("reInit", onSelect);
     return () => {
-      emblaApi.off("select", onSelect);
-      emblaApi.off("reInit", onSelect);
+      activeApi.off("select", onSelect);
+      activeApi.off("reInit", onSelect);
     };
-  }, [emblaApi, onSelect]);
+  }, [activeApi, onSelect]);
+
+  const dotCount = isMobile
+    ? groupedProducts.length
+    : (desktopApi?.scrollSnapList().length ?? 0);
 
   return (
     <section
-      className="w-full py-10 lg:pt-30 lg:pb-14 bg-(--bg)"
-      style={
-        {
-          "--bg": colors.background,
-        } as React.CSSProperties
-      }
+      className="w-full bg-(--bg)"
+      style={{ "--bg": colors.background } as React.CSSProperties}
     >
       <div className="mx-auto w-full max-w-330">
         <div className="mb-6 flex items-center justify-between">
@@ -63,7 +82,7 @@ const Suggestion = () => {
 
           <div className="flex gap-2">
             <button
-              onClick={() => emblaApi?.scrollPrev()}
+              onClick={() => activeApi?.scrollPrev()}
               disabled={!canScrollPrev}
               className="grid size-10 cursor-pointer place-items-center rounded-lg transition disabled:cursor-not-allowed"
               style={{
@@ -75,7 +94,7 @@ const Suggestion = () => {
             </button>
 
             <button
-              onClick={() => emblaApi?.scrollNext()}
+              onClick={() => activeApi?.scrollNext()}
               disabled={!canScrollNext}
               className="grid size-10 cursor-pointer place-items-center rounded-lg transition disabled:cursor-not-allowed"
               style={{
@@ -88,27 +107,38 @@ const Suggestion = () => {
           </div>
         </div>
 
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4">
-            {(loading ? [] : products.slice(0, 8)).map((item) => (
-              <div
-                key={item.id}
-                className="min-w-0 flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%]"
-              >
+        <div className="lg:hidden overflow-hidden" ref={mobileRef}>
+          <div className="flex">
+            {groupedProducts.map((group, index) => (
+              <div key={index} className="min-w-0 flex-[0_0_100%]">
+                <div className="grid grid-cols-2 gap-2">
+                  {group.map((item) => (
+                    <ProductCard key={item.id} item={item} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="hidden lg:block overflow-hidden" ref={desktopRef}>
+          <div className="flex -mx-2">
+            {visibleProducts.map((item) => (
+              <div key={item.id} className="min-w-0 flex-[0_0_25%] px-2">
                 <ProductCard item={item} />
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-6 flex justify-center gap-2">
-          {Array.from({ length: snapCount }).map((_, i) => (
+        <div className="mt-8 flex justify-center gap-3">
+          {Array.from({ length: dotCount }).map((_, i) => (
             <button
               key={i}
-              onClick={() => emblaApi?.scrollTo(i)}
-              className="h-2 rounded-full transition-all"
+              onClick={() => activeApi?.scrollTo(i)}
+              className="h-2 rounded-full transition-all duration-300"
               style={{
-                width: selectedIndex === i ? 40 : 30,
+                width: selectedIndex === i ? 40 : 24,
                 backgroundColor:
                   selectedIndex === i ? colors.secondary : "#A9A9A9",
               }}

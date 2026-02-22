@@ -1,18 +1,20 @@
 import Image from "next/image";
 import { colors } from "@/src/lib/colors";
+import SectionTitle from "@/src/hooks/SectionTitle";
+import { PrimaryButton } from "@/src/hooks/PrimaryButton";
 
 const HeroProduct = () => {
-  
   return (
-    <div className="px-4 pb-5 lg:pb-20">
+    <div className="w-full">
       <section className="relative h-100 lg:h-187.5 w-full overflow-hidden rounded-3xl lg:rounded-[4rem]">
         <Image
           src="/hero/shoe.jpg"
           alt="Nike Air Max"
-          width={1320}
-          height={750}
+          fill
           priority
-          className="h-full w-full object-cover"
+          sizes="(max-width: 1024px) 100vw, 1320px"
+          className="object-cover"
+          quality={100}
         />
 
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_31.12%,rgba(0,0,0,0.5)_66.06%)]" />
@@ -31,12 +33,7 @@ const HeroProduct = () => {
 
         <div className="absolute left-4 lg:left-12 bottom-5 lg:bottom-10 flex w-122.5 flex-col items-start gap-4">
           <div className="flex flex-col">
-            <h2
-              className="font-semibold text-2xl lg:text-7xl leading-snug"
-              style={{ color: colors.background }}
-            >
-              NIKE AIR MAX
-            </h2>
+            <SectionTitle text={`NIKE AIR MAX`} color={colors.background} />
             <p
               className="lg:text-2xl lg:w-full w-60 lg:leading-relaxed"
               style={{ color: colors.background }}
@@ -45,15 +42,7 @@ const HeroProduct = () => {
             </p>
           </div>
 
-          <button
-            className="flex py-2  lg:py-3 items-center justify-center rounded-lg px-6 text-xs lg:text-sm font-medium uppercase tracking-wide"
-            style={{
-              backgroundColor: colors.secondary,
-              color: colors.background,
-            }}
-          >
-            SHOP NOW
-          </button>
+          <PrimaryButton text="SHOP NOW" />
         </div>
 
         <div className="absolute right-4 lg:right-12 bottom-5 lg:bottom-10 flex lg:w-40 flex-col gap-2 lg:gap-4">
